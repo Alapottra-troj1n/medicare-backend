@@ -19,9 +19,14 @@ const run = async() =>{
 
         await client.connect();
         const database = client.db('medicare');
-        const treatmentCollection = database.collection('treatments');
+        const serviceCollection = database.collection('services');
 
-
+        app.get('/services', async(req, res) =>{
+            const query = {};
+            const cursor = await serviceCollection.find(query);
+            const services = await cursor.toArray();
+            res.send(services);
+        })
 
 
     }
