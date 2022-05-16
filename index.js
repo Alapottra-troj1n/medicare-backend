@@ -20,6 +20,7 @@ const run = async() =>{
         await client.connect();
         const database = client.db('medicare');
         const serviceCollection = database.collection('services');
+        const bookingCollection = database.collection('booking');
 
         app.get('/services', async(req, res) =>{
             const query = {};
@@ -27,6 +28,22 @@ const run = async() =>{
             const services = await cursor.toArray();
             res.send(services);
         })
+
+        app.post('/booking', async(req, res) =>{
+                const booking = req.body;
+
+                const query = {treatment: booking.treatment, date: booking.date, patient: booking.patient}
+
+                const exist = await bookingCollection.findOne(query);
+                if(exist){
+                   return res.send({success: false, booking: exist })
+                }
+                const results = await bookingCollection.insertOne(booking);
+                res.send({success: true,results});
+
+        })
+
+
 
 
     }
@@ -43,6 +60,7 @@ run().catch(console.dir);
 app.get('/', (req, res) => {
     res.send({message: 'hello world'})
 })
+
 
 
 
